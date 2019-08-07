@@ -24,19 +24,40 @@ server.on('request', (request, response) => {
   }
 
   else if (request.method === 'POST') {
-    let newMessage = { 'id': new Date() };
 
-    request.on('data', (data) => {
-      newMessage = Object.assign(newMessage, JSON.parse(data));
+    let body = [];
+    request.on('data', chunk => {
+        body.push(chunk.toString());
     });
-
     request.on('end', () => {
-      addMessage(newMessage, response);
+        const name = JSON.parse(body).name;
+        const id = new Date()
+        const message = {
+          name: name,
+          id: id
+        }
+        response.end(JSON.stringify(message));
     });
-  }
-});
+
+    // let newMessage = { 'id': new Date() };
+    // request.on('data', (data) => {
+    //   console.log('data')
+    //   newMessage = Object.assign(newMessage, JSON.parse(data));
+    //   console.log(newMessage)
+    // });
+    // request.on('end', () => {
+    //   addMessage(newMessage, response);
+    // });
+  } 
+});   
 
 getAllMessages = (response) => {
-    response.writeHead(200, {"Content-Type": "application/json"});
+    response.writeHead(200, {"Content-Type": "application/json"}); 
     response.end(JSON.stringify(messages));
-}
+} 
+  
+// addMessage = (newMessage, response) => { 
+//   // console.log(newMessage)
+//   response.writeHead(200, {"Content-Type": "application/json"});
+//   response.end(JSON.stringify(newMessage));
+// }   
